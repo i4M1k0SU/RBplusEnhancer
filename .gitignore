@@ -1,3 +1,4 @@
 #theos用gitignore
 .theos/
 debs/
+obj/
