@@ -1,7 +1,7 @@
 Package: pw.bemani.rbplusenhancer
 Name: RB plus Enhancer
 Depends: mobilesubstrate
-Version: 1.0.1
+Version: 1.0.2
 Architecture: iphoneos-arm
 Description: パステルくんさんを弄ることができます。その他おまけ機能つき。
 Maintainer: i4M1k0SU <i4m1k0su@bemani.pw>

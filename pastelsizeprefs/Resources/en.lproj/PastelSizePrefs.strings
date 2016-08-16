@@ -4,6 +4,9 @@
 "PASTELSPEEDX" = "Pastel Running Speed";
 "TITLE" = "RB plus Enhancer";
 "OPTIONS" = "Options";
-"SUPERRIVAL" = "Super Rival";
+"RIVALSETTINGS" = "Rival Settings";
+"DEFAULT" = "Default";
+"SUPERRIVAL" = "Super";
+"POORRIVAL" = "Poor";
 "DOUBLEPLAYALPHA" = "Disable transparency at DoublePlay";
 "MANUALALPHA" = "Manual opacity";

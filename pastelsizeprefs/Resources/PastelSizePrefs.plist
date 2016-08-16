@@ -77,15 +77,29 @@
 		</dict>
 		<dict>
 			<key>cell</key>
-			<string>PSSwitchCell</string>
+			<string>PSLinkListCell</string>
 			<key>default</key>
-			<false/>
+			<integer>0</integer>
 			<key>defaults</key>
 			<string>pw.bemani.rbplusenhancer</string>
+			<key>detail</key>
+			<string>PSListItemsController</string>
 			<key>key</key>
-			<string>sw_super_rival</string>
+			<string>lst_rival_lv</string>
 			<key>label</key>
-			<string>SUPERRIVAL</string>
+			<string>RIVALSETTINGS</string>
+			<key>validTitles</key>
+			<array>
+				<string>DEFAULT</string>
+				<string>POORRIVAL</string>
+				<string>SUPERRIVAL</string>
+			</array>
+			<key>validValues</key>
+			<array>
+				<integer>0</integer>
+				<integer>-3</integer>
+				<integer>10</integer>
+			</array>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -133,7 +147,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>footerText</key>
-			<string>RB plus Enhancer by i4M1k0SU</string>
+			<string>© 2016 i4M1k0SU</string>
 		</dict>
 	</array>
 	<key>title</key>

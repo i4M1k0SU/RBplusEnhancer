@@ -21,7 +21,7 @@ float originalRivalAlpha = 0.0;
 				NSDictionary *defaultPreferences = @{@"sw_enabled":@YES,
 																@"sl_scale":@10.0f,
 																@"sl_speed_x":@10.0f,
-																@"sw_super_rival":@NO,
+																@"lst_rival_lv":@0,
 																@"sw_double_play_alpha":@YES,
 																@"sw_manual_alpha":@NO,
 																@"sl_manual_alpha":@0.25f};
@@ -75,13 +75,85 @@ float originalRivalAlpha = 0.0;
 
 %end
 
-//ライバルをトップランカーにする
+//ライバルをトップランカー/クソザコにする
 %hook RBMusicCPUView
 
 	-(int)level {
 
-		if (isEnabled && [preferences[@"sw_super_rival"]boolValue]) {
-			return 10;
+		if (isEnabled && [preferences[@"lst_rival_lv"]intValue] != 0) {
+			return [preferences[@"lst_rival_lv"]intValue];
+		}
+		else {
+			return %orig;
+		}
+
+	}
+
+	-(id)selectedImage {
+
+		//スライダーのつまみを消す
+		if (isEnabled && [preferences[@"lst_rival_lv"]intValue] != 0) {
+			return nil;
+		}
+		else {
+			return %orig;
+		}
+
+	}
+
+	-(id)sliderView {
+
+		//有効時にスライダーを消し、ロックされている旨を示すメッセージを表示する
+		if (isEnabled && [preferences[@"lst_rival_lv"]intValue] != 0) {
+
+			NSString *text = @"Locked by RB plus Enhancer";
+			// 描画するサイズ
+	    CGSize size = CGSizeMake(272, 50);
+
+	    // ビットマップ形式のグラフィックスコンテキストの生成
+	    // 第2引数のopaqueを`NO`にすることで背景が透明になる
+	    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+
+
+	    // 描画する文字列の情報を指定する
+	    //--------------------------------------
+
+	    // 文字描画時に反映される影の指定
+	    NSShadow *shadow = [[NSShadow alloc] init];
+	    shadow.shadowOffset = CGSizeMake(0.f, -0.5f);
+	    shadow.shadowColor = [UIColor darkGrayColor];
+	    shadow.shadowBlurRadius = 0.f;
+
+	    // 文字描画に使用するフォントの指定
+	    UIFont *font = [UIFont boldSystemFontOfSize:20.0f];
+
+	    // パラグラフ関連の情報の指定
+	    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
+	    style.alignment = NSTextAlignmentCenter;
+	    style.lineBreakMode = NSLineBreakByClipping;
+
+	    NSDictionary *attributes = @{
+	           NSFontAttributeName: font,
+	           NSParagraphStyleAttributeName: style,
+	           NSShadowAttributeName: shadow,
+	           NSForegroundColorAttributeName: [UIColor blackColor],
+	           NSBackgroundColorAttributeName: [UIColor clearColor]
+	    };
+
+	    // 文字列を描画する
+	    [text drawInRect:CGRectMake(1, 14, size.width, size.height)
+	      withAttributes:attributes];
+
+	    // 現在のグラフィックスコンテキストの画像を取得する
+	    UIImage *image = nil;
+	    image = UIGraphicsGetImageFromCurrentImageContext();
+
+	    // 現在のグラフィックスコンテキストへの編集を終了
+	    // (スタックの先頭から削除する)
+	    UIGraphicsEndImageContext();
+
+			UIImageView *iv = [[UIImageView alloc] initWithImage:image];
+			return iv;
 		}
 		else {
 			return %orig;
@@ -117,7 +189,6 @@ float originalRivalAlpha = 0.0;
 
 		if (isEnabled && [preferences[@"sw_double_play_alpha"]boolValue]) {
 
-			//NSLog(@"rivalAlpha");
 			switch (doublePlayFlag) {
 
 				//シングルプレー

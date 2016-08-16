@@ -4,6 +4,9 @@
 "PASTELSPEEDX" = "ドブネズミ歩行速度";
 "TITLE" = "RB plus Enhancer";
 "OPTIONS" = "オプション";
-"SUPERRIVAL" = "トップランカーライバル";
+"RIVALSETTINGS" = "ライバル設定";
+"DEFAULT" = "デフォルト";
+"SUPERRIVAL" = "トップランカー";
+"POORRIVAL" = "無操作";
 "DOUBLEPLAYALPHA" = "2P時半透明状態解除";
 "MANUALALPHA" = "透明度手動設定";
