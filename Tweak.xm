@@ -6,45 +6,47 @@ BOOL isEnabled = NO;
 int doublePlayFlag = 0;
 float originalRivalAlpha = 0.0;
 
-//起動時の処理
-%hook AppDelegate
+//設定ファイルロード
+static void loadPreferences() {
 
-	//起動時に設定ファイルをロード
-	-(void)applicationDidBecomeActive:(id)arg1 {
-		%orig;
+	//設定ファイルの有無チェック
+	NSFileManager *fileManager = [NSFileManager defaultManager];
+	if (![fileManager fileExistsAtPath: kSettingsPath]) {
 
-		//設定ファイルの有無チェック
-		NSFileManager *fileManager = [NSFileManager defaultManager];
-		if (![fileManager fileExistsAtPath: kSettingsPath]) {
+			//ない場合にデフォルト設定を作成
+			NSDictionary *defaultPreferences = @{@"sw_enabled":@YES,
+															@"sl_scale":@10.0f,
+															@"sl_speed_x":@10.0f,
+															@"lst_rival_lv":@0,
+															@"sw_double_play_alpha":@YES,
+															@"sw_manual_alpha":@NO,
+															@"sl_manual_alpha":@0.25f};
 
-				//ない場合にデフォルト設定を作成
-				NSDictionary *defaultPreferences = @{@"sw_enabled":@YES,
-																@"sl_scale":@10.0f,
-																@"sl_speed_x":@10.0f,
-																@"lst_rival_lv":@0,
-																@"sw_double_play_alpha":@YES,
-																@"sw_manual_alpha":@NO,
-																@"sl_manual_alpha":@0.25f};
+			preferences = [[NSMutableDictionary alloc] initWithDictionary: defaultPreferences];
+			[defaultPreferences release];
 
-				preferences = [[NSMutableDictionary alloc] initWithDictionary: defaultPreferences];
+			#ifdef DEBUG
+				BOOL result = [preferences writeToFile: kSettingsPath atomically: YES];
+				if (!result) {
+					 NSLog(@"ファイルの書き込みに失敗");
+				}
+			#else
+				[preferences writeToFile: kSettingsPath atomically: YES];
+			#endif
 
-				#ifdef DEBUG
-					BOOL result = [preferences writeToFile: kSettingsPath atomically: YES];
-					if (!result) {
-						 NSLog(@"ファイルの書き込みに失敗");
-					}
-				#else
-					[preferences writeToFile: kSettingsPath atomically: YES];
-				#endif
-
-		} else {
-				//あれば読み込み
-				preferences = [[NSMutableDictionary alloc] initWithContentsOfFile: kSettingsPath];
-		}
-		isEnabled = [[preferences objectForKey:@"sw_enabled"]boolValue];
+	} else {
+			//あれば読み込み
+			preferences = [[NSMutableDictionary alloc] initWithContentsOfFile: kSettingsPath];
 	}
+	isEnabled = [[preferences objectForKey:@"sw_enabled"]boolValue];
 
-%end
+}
+
+//起動時の処理
+%ctor {
+	loadPreferences();
+}
+
 
 //パステルくんさんを弄る
 %hook RBMenuPastelkun
@@ -106,9 +108,18 @@ float originalRivalAlpha = 0.0;
 		//有効時にスライダーを消し、ロックされている旨を示すメッセージを表示する
 		if (isEnabled && [preferences[@"lst_rival_lv"]intValue] != 0) {
 
-			NSString *text = @"Locked by RB plus Enhancer";
+			NSString *text = @"\nLocked by RB plus Enhancer";
 			// 描画するサイズ
-	    CGSize size = CGSizeMake(272, 50);
+			//オリジナルの値を取得
+			UIImageView *originalUIImageView = %orig;
+			CGSize size = CGSizeMake([originalUIImageView frame].size.width, [originalUIImageView frame].size.height + 10);
+			//[originalUIImageView release];
+			float fontSize = 29.0f;
+			NSNumber *stroke = @-2.0;
+			if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone) {
+				//stroke = @-2.0;
+				fontSize = 22.0f;
+			}
 
 	    // ビットマップ形式のグラフィックスコンテキストの生成
 	    // 第2引数のopaqueを`NO`にすることで背景が透明になる
@@ -118,14 +129,8 @@ float originalRivalAlpha = 0.0;
 	    // 描画する文字列の情報を指定する
 	    //--------------------------------------
 
-	    // 文字描画時に反映される影の指定
-	    NSShadow *shadow = [[NSShadow alloc] init];
-	    shadow.shadowOffset = CGSizeMake(0.f, -0.5f);
-	    shadow.shadowColor = [UIColor darkGrayColor];
-	    shadow.shadowBlurRadius = 0.f;
-
 	    // 文字描画に使用するフォントの指定
-	    UIFont *font = [UIFont boldSystemFontOfSize:20.0f];
+	    UIFont *font = [UIFont boldSystemFontOfSize:fontSize];
 
 	    // パラグラフ関連の情報の指定
 	    NSMutableParagraphStyle *style = [[NSMutableParagraphStyle alloc] init];
@@ -135,14 +140,15 @@ float originalRivalAlpha = 0.0;
 	    NSDictionary *attributes = @{
 	           NSFontAttributeName: font,
 	           NSParagraphStyleAttributeName: style,
-	           NSShadowAttributeName: shadow,
+	           //NSShadowAttributeName: shadow,
+						 NSStrokeWidthAttributeName:stroke,//@-1.0,
+						 NSStrokeColorAttributeName:[UIColor whiteColor],
 	           NSForegroundColorAttributeName: [UIColor blackColor],
 	           NSBackgroundColorAttributeName: [UIColor clearColor]
 	    };
 
 	    // 文字列を描画する
-	    [text drawInRect:CGRectMake(1, 14, size.width, size.height)
-	      withAttributes:attributes];
+	    [text drawInRect:CGRectMake(0, 0, size.width, size.height) withAttributes:attributes];
 
 	    // 現在のグラフィックスコンテキストの画像を取得する
 	    UIImage *image = nil;
