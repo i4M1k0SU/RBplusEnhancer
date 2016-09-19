@@ -1,8 +1,8 @@
 Package: pw.bemani.rbplusenhancer
 Name: RB plus Enhancer
-Depends: mobilesubstrate
-Version: 1.0.3
+Version: 1.0.4
 Architecture: iphoneos-arm
+Depends: mobilesubstrate, preferenceloader, firmware (>= 6.0)
 Description: パステルくんさんのサイズ、速度とその他いろいろ弄ることができます。
 Maintainer: i4M1k0SU <i4m1k0su@bemani.pw>
 Author: i4M1k0SU <i4m1k0su@bemani.pw>

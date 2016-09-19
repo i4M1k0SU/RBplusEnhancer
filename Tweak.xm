@@ -242,3 +242,12 @@ static void loadPreferences() {
 	}
 
 %end
+
+//ライムポイント固定
+%hook RBExperienceData
+
+	-(float)getPoint {
+		return 99999.9;
+	}
+
+%end
