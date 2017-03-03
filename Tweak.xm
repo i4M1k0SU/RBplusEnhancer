@@ -1,4 +1,4 @@
-static NSString *const kSettingsPath = @"/var/mobile/Library/Preferences/pw.bemani.rbplusenhancer.plist";
+static NSString *const kSettingsPath = @"/var/mobile/Library/Preferences/jp.i4m1k0su.rbplusenhancer.plist";
 static const float kNoSeeThrough = 1.0f;
 
 NSMutableDictionary *preferences;
